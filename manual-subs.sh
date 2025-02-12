@@ -16,18 +16,24 @@ generate_slides() {
     local PARAGRAPH=""
     local LINE=""
     local RESOLUTION=1920x1080
-    local COLOR_TITLE=white
+    local COLOR_TITLE_DEFAULT=white
     local COLOR_BACK=black
     local FONT_NAME="/System/Library/Fonts/Helvetica.ttc"
-    local FONT_SIZE=70
+    local FONT_SIZE_DEFAULT=70
     local FONT_SIZE_TITLE=100
+    local GRAVITY_DEFAULT=West
+    local GRAVITY_TITLE=Center
 
     local INPUT=$1
     local SLIDES=$2
 
     # Create the output directory for slides
     mkdir -p $SLIDES
-    rm $SLIDES/*.png
+    rm -f $SLIDES/*.png
+
+    local FONT_SIZE=$FONT_SIZE_DEFAULT
+    local COLOR_TITLE=$COLOR_TITLE_DEFAULT
+    local GRAVITY=$GRAVITY_DEFAULT
 
     # Read the input file line by line
     while IFS=$'\r' read -r LINE; do
@@ -39,6 +45,7 @@ generate_slides() {
             COLOR_TITLE=red;
         elif [[ $LINE  == *"TITLE"* ]]; then
             FONT_SIZE=$FONT_SIZE_TITLE;
+            GRAVITY=$GRAVITY_TITLE;
         else
             PARAGRAPH="$PARAGRAPH"$'\n\n'"$LINE";
         fi
@@ -46,12 +53,13 @@ generate_slides() {
 
         # Check if the paragraph is too long
         local P_LEN=${#PARAGRAPH}
-        if (( "$P_LEN" > 600 )); then 
+        if (( "$P_LEN" > 660 )); then 
             echo
             echo "$COUNTER: $P_LEN"
             echo "    $PARAGRAPH" 
         else 
-            echo "$COUNTER"
+            #echo -ne "\rSlide #$COUNTER"
+            printf "\rCreating slide #${COUNTER}"
         fi
 
         # Create a slide
@@ -61,20 +69,20 @@ generate_slides() {
             -fill $COLOR_TITLE \
             -font $FONT_NAME \
             -pointsize $FONT_SIZE \
-            -gravity West \
+            -gravity $GRAVITY \
             caption:"$PARAGRAPH" \
             -bordercolor $COLOR_BACK \
             -border 100x100 \
             $SLIDES/$(printf "%03d" "$COUNTER").png
 
         PARAGRAPH=""
-        COLOR_TITLE=white
-        FONT_SIZE=70;
+        FONT_SIZE=$FONT_SIZE_DEFAULT
+        COLOR_TITLE=$COLOR_TITLE_DEFAULT
+        GRAVITY=$GRAVITY_DEFAULT
         COUNTER=$(($COUNTER+1))
         fi
     done < "$INPUT"
-
-    echo $(($COUNTER-1)) were made
+    echo ""
 }
 
 generate_pdf() {
@@ -87,19 +95,16 @@ generate_pdf() {
         files+=("$file")
     done
 
-    # Use convert to combine the files into a single PDF
     rm -f "$PDF"
-    magick "${files[@]}" $PDF
+    echo Creating PDF $PDF
 
-    echo $PDF was created
+    # Use convert to combine the files into a single PDF
+    magick "${files[@]}" $PDF
 }
 
-
-# Check if imagemagick is installed
-brew_install_or_skip imagemagick
-
-generate_slides $INPUT $SLIDES
-generate_pdf $SLIDES $PDF
-open $PDF
+brew_install_or_skip imagemagick;
+generate_slides $INPUT $SLIDES;
+generate_pdf $SLIDES $PDF;
+open $PDF;
 
 echo "DONE"
