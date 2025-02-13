@@ -4,7 +4,13 @@ Takes a text of a play and makes a PDF file with slides using `imagemagick`
 
 ## Usage
 ```bash
-./manual-subs.sh <playID>
+git clone https://github.com/ks1v/manual-subs.git && cd manual-subs
+```
+```bash
+chmod +x manual-subs.sh
+```
+```bash
+manual-subs.sh <playID>
 ```
 
 ## Structure
