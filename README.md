@@ -1,6 +1,6 @@
 # Manual subtitle generator
 
-Takes a text of a play and makes a PDF file with slides
+Takes a text of a play and makes a PDF file with slides using `imagemagick`
 
 ## Usage
 ```bash
@@ -30,7 +30,11 @@ Text file should be marked down as follows:
 3. Entire slide's text can be rendered red instead of white. In that case it should be preceded with `RED` keyword on the first line
 
 ### Example
-This input creates three slides:
+This input creates four slides:
+1. Red text 
+2. Blank slide before title
+3. Title slide
+4. White text
 
 ```
 RED
