@@ -11,6 +11,17 @@ brew_install_or_skip() {
     brew list "$PACKAGE" &>/dev/null || brew install "$PACKAGE"
 }
 
+blank_slide(){
+    local NAME=$1
+    local RESOLUTION=$2
+    local COLOR_BACK=$3
+
+    magick \
+            -size $RESOLUTION \
+            xc:$COLOR_BACK \
+            $NAME
+}
+
 generate_slides() {
     local COUNTER=1
     local PARAGRAPH=""
@@ -44,6 +55,11 @@ generate_slides() {
         if [[ $LINE  == *"RED"* ]]; then
             COLOR_TITLE=red;
         elif [[ $LINE  == *"TITLE"* ]]; then
+            # Blank slide before TITLE
+            blank_slide "$SLIDES/$(printf "%03d" "$COUNTER").png" $RESOLUTION $COLOR_BACK;
+            printf "\rCreating slide #${COUNTER}"
+            COUNTER=$(($COUNTER+1))
+
             FONT_SIZE=$FONT_SIZE_TITLE;
             GRAVITY=$GRAVITY_TITLE;
         else
@@ -58,7 +74,6 @@ generate_slides() {
             echo "$COUNTER: $P_LEN"
             echo "    $PARAGRAPH" 
         else 
-            #echo -ne "\rSlide #$COUNTER"
             printf "\rCreating slide #${COUNTER}"
         fi
 
