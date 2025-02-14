@@ -97,6 +97,9 @@ generate_slides() {
         COUNTER=$(($COUNTER+1))
         fi
     done < "$INPUT"
+    # Blank slide before TITLE
+    blank_slide "$SLIDES/$(printf "%03d" "$COUNTER").png" $RESOLUTION $COLOR_BACK;
+    printf "\rCreating slide #${COUNTER}"
     echo ""
 }
 

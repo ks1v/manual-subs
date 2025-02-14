@@ -31,6 +31,7 @@ Text file should be marked down as follows:
 1. Empty line separates two slides
 2. Titles should be preceded with a `TITLE` keyword on the first line
 3. Entire slide's text can be rendered red instead of white. In that case it should be preceded with `RED` keyword on the first line
+4. Last line of the file won't be rendered so place some text there i.e. `END`
 
 ### Example
 This input creates four slides:
